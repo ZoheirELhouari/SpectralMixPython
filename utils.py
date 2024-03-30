@@ -87,7 +87,27 @@ class ReadData():
         self.nodes = adj1.shape[0]        
         self.adj = [adj1,adj2]
     
-     
+    # implement feature oriented data augmentation techniques
+        
+        # 1. feature masking 
+        # 2. feature shuffling
+        # 3. feature corruption
+
+    def featureMasking(self, mask_rate):
+        mask_rate = 0.5
+        mask = np.random.rand(self.node_attr.shape[0], self.node_attr.shape[1]) < mask_rate
+        print("this is the mask")
+        print(mask)
+        self.node_attr[mask] = 0
+
+    def featureShuffling(self):
+        np.random.shuffle(self.node_attr)
+
+    def featureCorruption(self):
+        self.node_attr = np.random.rand(self.node_attr.shape[0], self.node_attr.shape[1])
+
+
+    
     
 
 
