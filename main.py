@@ -13,7 +13,6 @@ print(graphName)
 
 dataset = ReadData(graphName)
 dataset.printD()
-# dataset.feature_masking(0.1)
 graphs = dataset.graphs
 node_attr = dataset.node_attr
 num_atts = dataset.atts
