@@ -3,7 +3,7 @@ import math
 import random
 
 import numba
-from numba import  typeof
+from numba import  typeof,typed
 from numba.experimental import jitclass
 
 
@@ -13,8 +13,10 @@ import sys
 from utils import ReadData
 from spectral import Model
 from dotenv import load_dotenv
+from collections import OrderedDict
 load_dotenv()
 
+graphName = sys.argv[1]
 numba_version = numba.__version__
 
 # Print the version
@@ -24,7 +26,7 @@ print(f"Numba version: {numba_version}")
 
 
 
-dataset = ReadData('imdb')
+dataset = ReadData(graphName)
 graphs = dataset.graphs
 node_attr = dataset.node_attr
 num_atts = dataset.atts
@@ -71,28 +73,29 @@ num_cat = countAtt.shape[0]*count.shape[1]
 attributeLabelEmbedding = np.zeros((num_cat, dim))
 nodeEmbedding = np.zeros((num_nodes, dim))
 
-spec = [
-        ('attributes', typeof(node_attr)),
-        ('attributeLabelNumber', typeof(num_atts)),
-        ('countCat',typeof(countAtt)),
-        ('attributeLabelEmbedding', typeof(attributeLabelEmbedding)),
-        ('numNodes', typeof(num_nodes)),
-        ('nodeEmbedding', typeof(nodeEmbedding)),
-        ('startIndex', typeof(startIndex)),
-        ('d', typeof(dim)),
-        ('iterr', typeof(iterations)),
-        ('extraiter', typeof(extra)),    
-        ('num_g', typeof(graphs)),
-        ('adj', typeof(adj)),
-        ('weightFactors', typeof(weightFactors)),
-        ('sumWeights', typeof(sumWeights)),
-        ('cat_count', typeof(num_cat))
-    ]
-
-
+# Define the specification for the numba class
+spec_dict = {
+    'attributes': typeof(node_attr),
+    'attributeLabelNumber': typeof(num_atts),
+    'countCat':typeof(countAtt),
+    'attributeLabelEmbedding': typeof(attributeLabelEmbedding),
+    'numNodes': typeof(num_nodes),
+    'nodeEmbedding': typeof(nodeEmbedding),
+    'startIndex': typeof(startIndex),
+    'd': typeof(dim),
+    'iterr': typeof(iterations),
+    'extraiter': typeof(extra),
+    'num_g': typeof(graphs),
+    'adj': typeof(adj),
+    'weightFactors': typeof(weightFactors),
+    'sumWeights': typeof(sumWeights),
+    'cat_count': typeof(num_cat)
+}
+# for better numba compatibility, we need to use OrderedDict
+spec_dict = OrderedDict(spec_dict)
 # Numba class - compute the node embeddings, node attribute embeddings, and node labels embeddings
 
-@jitclass(spec)
+@jitclass(spec_dict)
 class Embedder(object):  
     def __init__(self, num_g, adj, numNodes, attributes, attributeLabelNumber, d, iterr, extraiter, cat_count, countCat, startIndex, weightFactors, sumWeights):
         self.num_g = num_g
@@ -114,9 +117,7 @@ class Embedder(object):
         self.nodeEmbedding = np.zeros((self.numNodes, self.d))
         self.attributeLabelEmbedding = np.zeros((self.cat_count, self.d))
 
-        self.initLoop() 
-
-    
+        self.initLoop()     
     
     # Compute the cost of SSAMN objective function
     def Objective(self):

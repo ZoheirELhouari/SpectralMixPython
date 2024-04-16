@@ -13,6 +13,8 @@ print(graphName)
 
 dataset = ReadData(graphName)
 dataset.printD()
+dataset.featureAdditionWithNoise(num_features=1500)
+dataset.featureMasking(mask_prob = 0.01)
 graphs = dataset.graphs
 node_attr = dataset.node_attr
 num_atts = dataset.atts
@@ -60,7 +62,20 @@ for i in range(0, countAtt.shape[0]):
 num_cat = countAtt.shape[0]*count.shape[1]
 
 start = time.time()
-embed = Embedder(graphs, adj, num_nodes,  node_attr, num_atts, dim, iterations, extra, num_cat, countAtt, startIndex, weightFactors, sumWeights)
+embed = Embedder(
+                num_g=graphs, 
+                 adj=adj, 
+                 numNodes=num_nodes,  
+                 attributes=node_attr, 
+                 attributeLabelNumber=num_atts, 
+                 d=dim, iterr=iterations, 
+                 extraiter=extra, 
+                 cat_count=num_cat, 
+                 countCat=countAtt, 
+                 startIndex=startIndex, 
+                 weightFactors=weightFactors, 
+                 sumWeights=sumWeights
+                 )
 embed.run()
 nodeEmb = embed.nodeEmbedding
 attEmb = embed.attributeLabelEmbedding

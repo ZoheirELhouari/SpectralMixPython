@@ -1,6 +1,8 @@
 import numpy as np
 import scipy.io
 from numpy import loadtxt
+from numba import typed
+from numba import jit
 
 # Class to read the graph - dataset
 class ReadData():
@@ -16,13 +18,14 @@ class ReadData():
     dim_cluster = 2         # the best cluster dimensionality for the node clustering task
 	
     node_attr = {}			# all node attributes (if available) and node labels
-    adj = []				# all adjacency matrices of input graphs/layers
-    gt = []					# ground truth data
-    test_ids = []           # test data
-    val_ids = []            # validation data
-    train_ids = []          # training data
+    # use typed.List() to define a list of a specific type in numba
+    adj = typed.List()				# all adjacency matrices of input graphs/layers
+    gt = typed.List()					# ground truth data
+    test_ids = typed.List()           # test data
+    val_ids = typed.List()            # validation data
+    train_ids = typed.List()          # training data
 
-    labels = []             # ground-truth data
+    labels = typed.List()             # ground-truth data
     
     
     def __init__(self, name):
@@ -56,7 +59,8 @@ class ReadData():
         self.train_ids = np.sort(loadtxt(path + 'train_ids.txt')).astype(int)
         
         self.nodes = adj1.shape[0]
-        self.adj = [adj1, adj2]
+        self.adj.append(adj1)
+        self.adj.append(adj2)
         
                 
     def readACM(self):
@@ -85,30 +89,53 @@ class ReadData():
         self.gt = np.loadtxt(path + "ground_truth.txt")
         
         self.nodes = adj1.shape[0]        
-        self.adj = [adj1,adj2]
+        self.adj.append(adj1)
+        self.adj.append(adj2)
     
-    # implement feature oriented data augmentation techniques
+    # feature oriented data augmentation techniques
         
-        # 1. feature masking 
-        # 2. feature shuffling
-        # 3. feature corruption
+        # 1. feature masking
+        # 2. feature addition 
 
-    def featureMasking(self, mask_rate):
-        mask_rate = 0.5
-        mask = np.random.rand(self.node_attr.shape[0], self.node_attr.shape[1]) < mask_rate
-        print("this is the mask")
-        print(mask)
-        self.node_attr[mask] = 0
+    def featureMasking(self, mask_prob):
+        """
+            Applies feature masking to the input features.
 
-    def featureShuffling(self):
-        np.random.shuffle(self.node_attr)
+            Args:
+                mask_prob (float): Probability of masking an attribute (0 <= mask_prob <= 1).
 
-    def featureCorruption(self):
-        self.node_attr = np.random.rand(self.node_attr.shape[0], self.node_attr.shape[1])
+            Returns:
+                np.ndarray: Masked feature matrix.
+            """
 
+        mask = np.random.binomial(1, 1 - mask_prob, size=self.node_attr.shape[0])
+        mask = np.expand_dims(mask, axis=1)
 
+        self.node_attr = self.node_attr * mask
+
+        return self.node_attr
     
-    
+        
+
+    def featureAdditionWithNoise(self, num_features = 30):
+        print("this is the original feature matrix shape")
+        print(self.node_attr.shape)
+       # add  new features to the feature matrix the feature value should be either 0 or 1
+        new_features = []
+        for i in range(num_features):
+            new_feature = np.random.randint(1, size=(self.node_attr.shape[0], 1))
+            # another sampling strategy: the new feature is a randomly selected column from the original feature matrix
+            # new_feature = self.node_attr[:, np.random.randint(0, self.node_attr.shape[1])].reshape(-1, 1)
+            noise = np.random.normal(0, 0.1, new_feature.shape)
+            new_feature = new_feature + noise
+            new_features.append(new_feature)
+
+        for new_feature in new_features:
+            self.node_attr = np.concatenate((self.node_attr, new_feature), axis=1)
+
+        print("this is the new feature matrix shape after adding "+str(num_features)+" new features")
+        print(self.node_attr.shape)
+            
 
 
     def readData(self):
