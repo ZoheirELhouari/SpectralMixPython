@@ -32,10 +32,11 @@ pip-delete-this-directory.txt
 venv/
 ENV/
 env/
+data/
 
 # IDEs
 .idea/
 .vscode/
 
 # Environment files
-.env
+

@@ -2,8 +2,7 @@ import numpy as np
 import math
 import random
 
-import numba
-from numba import  typeof,typed
+from numba import typeof
 from numba.experimental import jitclass
 
 
@@ -17,14 +16,9 @@ from collections import OrderedDict
 load_dotenv()
 
 graphName = sys.argv[1]
-numba_version = numba.__version__
-
-# Print the version
-print(f"Numba version: {numba_version}")
+augmentation_method = sys.argv[2]
 
 # make the envriment variable NUMBA_DEBUG=1 to see the compilation steps
-
-
 
 dataset = ReadData(graphName)
 graphs = dataset.graphs
@@ -37,8 +31,9 @@ iterations = dataset.iterations
 extra = dataset.extraiter
 print("Graphs = ", graphs, " Nodes = ", num_nodes, " Attributes = ", num_atts, " Dim = ", dim, " Iterations = ", iterations, " Extra = ", extra)
 
+adj, node_attr = dataset.augmentFeatures(augmentation_method)
 
-m = Model(graphs, adj, num_nodes , False, node_attr, num_atts)
+m = Model(graphs, adj, num_nodes , True, node_attr, num_atts)
 
 startIndex = m.startIndex
 sumWeights = m.sumWeights

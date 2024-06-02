@@ -1,6 +1,7 @@
-# Project Title
+# Data augmentation techniques applied to SpectralMix Algorithm
 
-A brief description of your project.
+Based on the work of Ylli Sadikaj, Yllka Velaj, Sahar Behzadi, Claudia Plant
+Paper Link: https://arxiv.org/pdf/2311.01840
 
 ## Table of Contents
 
@@ -11,9 +12,18 @@ A brief description of your project.
 
 ## Installation
 
-Instructions on how to install and set up your project.
+pip install -r requirements.txt
 
 ## Usage
+
+template to run the project:
+` python main.py [datasetName] [augmentation method]`
+Example run : `python main.py acm graph_diffusion_ppr`
+
+Run SpectralMix without data augmentation:
+`python main.py acm no_augmentation`
+
+python main.py acm graph_diffusion_ppr
 
 Examples and instructions on how to use your project.
 
