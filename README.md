@@ -12,21 +12,26 @@ Paper Link: https://arxiv.org/pdf/2311.01840
 
 ## Installation
 
+```
 pip install -r requirements.txt
+```
 
 ## Usage
 
 template to run the project:
-` python main.py [datasetName] [augmentation method]`
-Example run : `python main.py acm graph_diffusion_ppr`
+```
+python main.py [datasetName] [augmentation method]
+```
 
-Run SpectralMix without data augmentation:
-`python main.py acm no_augmentation`
-
+Run SpectralMix WITH data augmentation : 
+```
 python main.py acm graph_diffusion_ppr
+```
 
-Examples and instructions on how to use your project.
-
+Run SpectralMix WITHOUT data augmentation:
+```
+python main.py acm no_augmentation`
+```
 ## Contributing
 
 Guidelines for contributing to your project.
