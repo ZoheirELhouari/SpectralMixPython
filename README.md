@@ -32,6 +32,10 @@ Run SpectralMix WITHOUT data augmentation:
 ```
 python main.py acm no_augmentation`
 ```
+
+## Results: 
+After successfully running running the project, the results will be added as a new row inside the csv file in the project folder called: ```experiment_results.csv```
+
 ## Contributing
 
 Guidelines for contributing to your project.
