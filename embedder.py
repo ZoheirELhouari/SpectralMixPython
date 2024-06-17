@@ -4,7 +4,7 @@ import random
 
 from numba import typeof
 from numba.experimental import jitclass
-
+from numba import typed, types
 
 
 
@@ -18,7 +18,7 @@ load_dotenv()
 graphName = sys.argv[1]
 augmentation_method = sys.argv[2]
 
-# make the envriment variable NUMBA_DEBUG=1 to see the compilation steps
+# # make the envriment variable NUMBA_DEBUG=1 to see the compilation steps
 
 dataset = ReadData(graphName)
 graphs = dataset.graphs
@@ -29,9 +29,12 @@ adj = dataset.adj
 dim = dataset.dim
 iterations = dataset.iterations
 extra = dataset.extraiter
-print("Graphs = ", graphs, " Nodes = ", num_nodes, " Attributes = ", num_atts, " Dim = ", dim, " Iterations = ", iterations, " Extra = ", extra)
 
-adj, node_attr = dataset.augmentFeatures(augmentation_method)
+adj, node_attr = dataset.augmentData(augmentation_method)
+num_atts = dataset.atts
+num_nodes = dataset.nodes
+
+print("embedder:" + "Graphs = ", graphs, " Nodes = ", num_nodes, " Attributes = ", num_atts, " Dim = ", dim, " Iterations = ", iterations, " Extra = ", extra)
 
 m = Model(graphs, adj, num_nodes , True, node_attr, num_atts)
 
