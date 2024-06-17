@@ -46,7 +46,12 @@ extra = dataset.extraiter
 
 # Apply feature-oriented augmentation
 augmentation_method_exec_time_start = time.time()
-adj, node_attr = dataset.augmentFeatures(augmentation_method)
+adj, node_attr = dataset.augmentData(augmentation_method)
+num_atts = dataset.atts
+num_nodes = dataset.nodes
+
+print("main:" +"Graphs = ", graphs, " Nodes = ", num_nodes, " Attributes = ", num_atts, " Dim = ", dim, " Iterations = ", iterations, " Extra = ", extra)
+
 augmentation_method_exec_time_end = time.time()
 augmentation_method_exec_time = augmentation_method_exec_time_end - augmentation_method_exec_time_start
 
@@ -87,7 +92,7 @@ num_cat = countAtt.shape[0]*count.shape[1]
 
 start = time.time()
 embed = Embedder(
-                num_g=graphs, 
+                 num_g=graphs, 
                  adj=adj, 
                  numNodes=num_nodes,  
                  attributes=node_attr, 
