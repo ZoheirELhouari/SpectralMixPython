@@ -25,7 +25,7 @@ python main.py [datasetName] [augmentation method]
 
 Run SpectralMix WITH data augmentation : 
 ```
-python main.py acm graph_diffusion_ppr
+python main.py acm graph_sampling
 ```
 
 Run SpectralMix WITHOUT data augmentation:
