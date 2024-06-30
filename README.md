@@ -16,6 +16,8 @@ Paper Link: https://arxiv.org/pdf/2311.01840
 pip install -r requirements.txt
 ```
 
+also, make sure to unzip the ```data.zip``` file to use the datasets
+
 ## Usage
 
 template to run the project:
