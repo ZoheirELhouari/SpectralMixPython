@@ -4,8 +4,6 @@ import random
 
 from numba import typeof
 from numba.experimental import jitclass
-from numba import typed, types
-
 
 
 import sys

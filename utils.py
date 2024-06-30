@@ -1,11 +1,9 @@
 import numpy as np
 import scipy.io
 from numpy import loadtxt
-from numba import typed,types,typeof
+from numba import typed
 from scipy.linalg import expm
 from structure_utils import GraphRewiring
-from collections import OrderedDict
-from spectral import Model
 import random
 
 # Class to read the graph - dataset
@@ -101,7 +99,38 @@ class ReadData():
         self.adj.append(adj1)
         self.adj.append(adj2)
          
+    def generate_synthetic_dataset(self, num_nodes=2000, num_features=1200, num_relations=2, p=0.75):
+        self.graphs = num_relations
+        self.nodes = num_nodes
+        self.atts = num_features
+        self.dim = 32
+        self.clusters = 11
+        self.iterations = 100
+        self.extraiter = 20
+        
+        # Generate random features
+        self.node_attr = np.random.randint(2, size=(self.nodes, self.atts)).astype(float)
+        
+        # Generate random adjacency matrices from a Bernoulli distribution
+        for _ in range(self.graphs):
+            adj_matrix = np.random.binomial(1, p, size=(self.nodes, self.nodes))
+            adj_matrix = np.tril(adj_matrix) + np.tril(adj_matrix, -1).T  # Make it symmetric
+            np.fill_diagonal(adj_matrix, 0)  # No self-loops
+            self.adj.append(adj_matrix)  # Store as numpy array        
 
+        # Generate random ground truth labels
+        self.gt = np.random.randint(2, self.clusters, self.nodes)
+        
+        # Split data into training, validation, and test sets
+        indices = np.arange(self.nodes).astype(int)
+        np.random.shuffle(indices)
+        split1 = int(0.6 * self.nodes)
+        split2 = int(0.8 * self.nodes)
+        self.train_ids = indices[:split1]
+        self.val_ids = indices[split1:split2]
+        self.test_ids = indices[split2:]
+    
+    
     ### Feature-oriented augmentations
     
     def feature_masking_augmentation(self, node_attributes, success_probablity=0.2):
@@ -177,18 +206,6 @@ class ReadData():
         return adj_augmented_matrices
             
     def node_dropping_augmentation(self, adj, node_attributes, drop_rate=0.1):
-        """
-        Applies node dropping augmentation by removing nodes and their corresponding edges from the adjacency matrix.
-
-        Parameters:
-        - adj (numpy.ndarray): The original adjacency matrix.
-        - node_attributes (numpy.ndarray): The original node attributes.
-        - drop_rate (float): The fraction of nodes to be dropped.
-
-        Returns:
-        - augmented_adj (numpy.ndarray): The augmented adjacency matrix with removed nodes and edges.
-        - augmented_node_attributes (numpy.ndarray): The augmented node attributes with removed nodes.
-        """
         print("########## Node Dropping Augmentation ##########")
         # Node dropping augmentation by removing nodes and their corresponding edges in the adjacency matrix
         augmented_adj = np.copy(adj)
@@ -215,9 +232,6 @@ class ReadData():
         augmented_node_attributes = augmented_node_attributes[keep_indices]
         
         print("#### Nodes were dropped ####")
-        print("New adjacency matrix shape:", augmented_adj.shape)
-        print("New node attributes shape:", augmented_node_attributes.shape)
-        
         return augmented_adj, augmented_node_attributes
 
     def cosine_attribute_similarity(self,attr1, attr2):
@@ -462,6 +476,8 @@ class ReadData():
             self.readIMDB()
         elif(self.name == 'acm'):
             self.readACM()
+        elif(self.name == 'random'):
+            self.generate_synthetic_dataset()
 
 
     def printD(self):

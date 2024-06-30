@@ -50,7 +50,7 @@ adj, node_attr = dataset.augmentData(augmentation_method)
 num_atts = dataset.atts
 num_nodes = dataset.nodes
 
-print("main:" +"Graphs = ", graphs, " Nodes = ", num_nodes, " Attributes = ", num_atts, " Dim = ", dim, " Iterations = ", iterations, " Extra = ", extra)
+print("Main:" +"Graphs = ", graphs, " Nodes = ", num_nodes, " Attributes = ", num_atts, " Dim = ", dim, " Iterations = ", iterations, " Extra = ", extra)
 
 augmentation_method_exec_time_end = time.time()
 augmentation_method_exec_time = augmentation_method_exec_time_end - augmentation_method_exec_time_start
