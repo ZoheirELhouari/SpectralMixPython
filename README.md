@@ -1,6 +1,6 @@
 # Data augmentation techniques applied to SpectralMix Algorithm
 
-Based on the work of Ylli Sadikaj, Yllka Velaj, Sahar Behzadi, Claudia Plant
+Based on the work of Yllka Velaj, Ylli Sadikaj, Sahar Behzadi, Claudia Plant
 Paper Link: https://arxiv.org/pdf/2311.01840
 
 ## Table of Contents
